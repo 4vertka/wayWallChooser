@@ -3,14 +3,14 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 Window {
-    width: 890
-    height: 600
+    width: 1024
+    height: 720
 
-    maximumWidth: 890
-    maximumHeight: 600
+    maximumWidth: 1024
+    maximumHeight: 720
 
     minimumWidth: 590
-    minimumHeight: 400
+    minimumHeight: 415
     visible: true
     title: qsTr("wall_chooser")
 
@@ -85,30 +85,35 @@ Window {
     Rectangle {
         id: mainArea
         color: "#636CCB"
-
-        readonly property real minCellWidth: 200
+        //anchors.fill: parent
 
         GridView {
             id: gridImageView
-            cellWidth: 240
-            cellHeight: 135
-            anchors {
-                fill: parent
-                margins: 5
-            }
-            anchors.horizontalCenter: mainArea.horizontalCenter
-            anchors.verticalCenter: mainArea.verticalCenter
+            anchors.fill: parent
+            anchors.centerIn: parent
+            //anchors.fill: parent
+            //anchors.margins: 0
+
+            property int idealCellWidth: 230
+            property int idealCellHeight: 135
+
+            //cellWidth: 240
+            cellWidth: width / Math.floor(width / idealCellWidth)
+            //cellHeight: 135
+            cellHeight: idealCellHeight
             model: 50
 
             delegate: Item {
                 id: gridImageViewItem
                 width: gridImageView.cellWidth
                 height: gridImageView.cellHeight
-
                 Rectangle {
                     id: gridImageViewRectangle
-                    anchors.fill: parent
-                    anchors.margins: 4
+                    //anchors.fill: parent
+                    anchors.centerIn: parent
+                    width: gridImageView.idealCellWidth - 20
+                    height: gridImageView.idealCellHeight - 20
+                    //anchors.margins: 4
                     color: "#eee"
                 }
             }
