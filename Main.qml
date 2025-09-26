@@ -3,31 +3,19 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 Window {
-    width: 1024
-    height: 720
-    maximumWidth: 1024
-    maximumHeight: 720
-    minimumWidth: 300
+    width: 890
+    height: 600
+
+    maximumWidth: 890
+    maximumHeight: 600
+
+    minimumWidth: 590
     minimumHeight: 400
     visible: true
     title: qsTr("wall_chooser")
 
-    property bool isSmallestLayout: width <= 450
-    property bool isSmallerLayout: !isSmallestLayout && width <= 750
-    property bool isNormalLayout: !isSmallestLayout && !isSmallerLayout
-
-    //Smallest
-    ColumnLayout {
-        anchors.fill: parent
-        spacing: 0
-        visible: isSmallestLayout
-
-        LayoutItemProxy  {
-            target: mainArea
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-    }
+    property bool isSmallerLayout: width <= 750
+    property bool isNormalLayout: !isSmallerLayout
 
     //Smaller
     RowLayout {
@@ -60,23 +48,11 @@ Window {
             Layout.fillHeight: true
         }
 
-        //ColumnLayout {
-        //    spacing: 1
-        //    Layout.fillWidth: true
-        //    Layout.fillHeight: true
-
-        //    LayoutItemProxy  {
-        //        target: topMenu
-        //        height: 40
-        //        Layout.fillWidth: true
-        //   }
-
         LayoutItemProxy  {
             target: mainArea
             Layout.fillWidth: true
             Layout.fillHeight: true
         }
-        //}
     }
 
     //left Menu
@@ -114,21 +90,26 @@ Window {
 
         GridView {
             id: gridImageView
-            cellWidth: width / Math.floor(width / parent.minCellWidth)
-            cellHeight: cellWidth * 1.4
-            anchors.fill: parent
-            anchors.margins: 8
-            model: 30
-            clip: true
+            cellWidth: 240
+            cellHeight: 135
+            anchors {
+                fill: parent
+                margins: 5
+            }
+            anchors.horizontalCenter: mainArea.horizontalCenter
+            anchors.verticalCenter: mainArea.verticalCenter
+            model: 50
+
             delegate: Item {
+                id: gridImageViewItem
                 width: gridImageView.cellWidth
                 height: gridImageView.cellHeight
 
                 Rectangle {
+                    id: gridImageViewRectangle
                     anchors.fill: parent
                     anchors.margins: 4
                     color: "#eee"
-                    radius: 8
                 }
             }
         }
