@@ -11,11 +11,9 @@ Window {
         anchors.fill: parent
         spacing: 1
 
-        //Left menu
-        Rectangle {
-            id: leftMenu
+        LayoutItemProxy  {
+            target: leftMenu
             width: 200
-            color: "#6E8CFB"
             Layout.fillHeight: true
         }
 
@@ -24,21 +22,31 @@ Window {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            //Top menu
-            Rectangle {
-                id: topMenu
+            LayoutItemProxy  {
+                target: topMenu
                 height: 40
-                color: "#636CCB"
                 Layout.fillWidth: true
             }
 
-            //Main area
-            Rectangle {
-                id: mainArea
-                color: "#6F00FF"
-                Layout.fillHeight: true
+            LayoutItemProxy  {
+                target: mainArea
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
+    }
+
+    Rectangle {
+        id: leftMenu
+        color: "#6E8CFB"
+    }
+
+    Rectangle {
+        id: topMenu
+        color: "#6F00FF"
+    }
+    Rectangle {
+        id: mainArea
+        color: "#636CCB"
     }
 }
