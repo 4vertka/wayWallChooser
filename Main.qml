@@ -5,6 +5,10 @@ import QtQuick.Controls
 Window {
     width: 1024
     height: 720
+    maximumWidth: 1024
+    maximumHeight: 720
+    minimumWidth: 300
+    minimumHeight: 400
     visible: true
     title: qsTr("wall_chooser")
 
@@ -15,14 +19,8 @@ Window {
     //Smallest
     ColumnLayout {
         anchors.fill: parent
-        spacing: 1
+        spacing: 0
         visible: isSmallestLayout
-
-        LayoutItemProxy  {
-            target: topMenu
-            height: 40
-            Layout.fillWidth: true
-        }
 
         LayoutItemProxy  {
             target: mainArea
@@ -34,7 +32,7 @@ Window {
     //Smaller
     RowLayout {
         anchors.fill: parent
-        spacing: 1
+        spacing: 0
         visible: isSmallerLayout
 
         LayoutItemProxy  {
@@ -43,72 +41,42 @@ Window {
             Layout.fillHeight: true
         }
 
-        ColumnLayout {
-            spacing: 1
+        LayoutItemProxy  {
+            target: mainArea
             Layout.fillWidth: true
             Layout.fillHeight: true
-
-            LayoutItemProxy  {
-                target: topMenu
-                height: 40
-                Layout.fillWidth: true
-            }
-
-            LayoutItemProxy  {
-                target: mainArea
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
         }
     }
 
     //Normal
     RowLayout {
         anchors.fill: parent
-        spacing: 1
+        spacing: 0
         visible: isNormalLayout
 
         LayoutItemProxy  {
             target: leftMenu
-            width: 200
+            width: 150
             Layout.fillHeight: true
         }
 
-        ColumnLayout {
-            spacing: 1
+        //ColumnLayout {
+        //    spacing: 1
+        //    Layout.fillWidth: true
+        //    Layout.fillHeight: true
+
+        //    LayoutItemProxy  {
+        //        target: topMenu
+        //        height: 40
+        //        Layout.fillWidth: true
+        //   }
+
+        LayoutItemProxy  {
+            target: mainArea
             Layout.fillWidth: true
             Layout.fillHeight: true
-
-            LayoutItemProxy  {
-                target: topMenu
-                height: 40
-                Layout.fillWidth: true
-            }
-
-            LayoutItemProxy  {
-                target: mainArea
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
         }
-    }
-
-    Drawer {
-        id: smallestDrawer
-        width: 100
-        height: parent.height
-        interactive: isSmallestLayout
-        edge: Qt.LeftEdge
-
-        background: Rectangle {
-            color: "#D2C1B6"
-        }
-
-        contentItem: LayoutItemProxy {
-            target: leftMenu
-            width: smallestDrawer.width
-            height: smallestDrawer.height
-        }
+        //}
     }
 
     //left Menu
@@ -117,50 +85,23 @@ Window {
         color: "#6E8CFB"
         Column {
             anchors.fill: parent
-            spacing: 8
+            spacing: 4
 
-            Repeater {
-                width: parent.width
-                model: 5
-                delegate: Item {
-                    width: leftMenu.width
-                    height: 50
-
-                    Row {
-                        Item {
-                            width: 50
-                            height: 50
-
-                            Rectangle {
-                                width: 40
-                                height: 40
-                                radius: 8
-                                anchors.centerIn: parent
-                            }
-                        }
-                        //Text {
-                        //    text: qsTr("Menu: ") + (index + 1).toString()
-                        //    font.pixelSize: 16
-                        //    leftPadding:  8
-                            //anchors.centerIn: parent
-                        //}
-                    }
-                }
+            Button {
+                width: leftMenu.width
+                height: 50
+                //anchors.centerIn: parent
+                icon.name: "homeIcon"
+                icon.source: "qrc:/new/prefix1/home.png"
             }
-        }
-    }
+             Button {
+                width: leftMenu.width
+                height: 50
+                //anchors.centerIn: parent
+                icon.name: "homeIcon"
+                icon.source: "qrc:/new/prefix1/home.png"
+            }
 
-    //top Menu
-    Rectangle {
-        id: topMenu
-        color: "#6F00FF"
-
-        Text {
-            text: qsTr("Some info")
-            leftPadding: 20
-            font.pixelSize: 18
-            color: "#D2C1B6"
-            anchors.verticalCenter: parent.verticalCenter
         }
     }
 
