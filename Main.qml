@@ -11,6 +11,7 @@ Window {
 
     minimumWidth: 590
     minimumHeight: 415
+
     visible: true
     title: qsTr("wall_chooser")
 
@@ -85,38 +86,27 @@ Window {
     Rectangle {
         id: mainArea
         color: "#636CCB"
-        //anchors.fill: parent
+        readonly property real minCellWidth: 240
 
         GridView {
             id: gridImageView
+            cellWidth: width / Math.floor(width / parent.minCellWidth)
+            cellHeight: cellWidth * 0.6//1.4
             anchors.fill: parent
-            anchors.centerIn: parent
-            //anchors.fill: parent
-            //anchors.margins: 0
-
-            property int idealCellWidth: 230
-            property int idealCellHeight: 135
-
-            //cellWidth: 240
-            cellWidth: width / Math.floor(width / idealCellWidth)
-            //cellHeight: 135
-            cellHeight: idealCellHeight
-            model: 50
-
+            anchors.margins: 8
+            model: 30
+            clip: true
             delegate: Item {
-                id: gridImageViewItem
                 width: gridImageView.cellWidth
                 height: gridImageView.cellHeight
-                Rectangle {
-                    id: gridImageViewRectangle
-                    //anchors.fill: parent
-                    anchors.centerIn: parent
-                    width: gridImageView.idealCellWidth - 20
-                    height: gridImageView.idealCellHeight - 20
-                    //anchors.margins: 4
-                    color: "#eee"
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: 4
+                        color: "#eee"
+                        radius: 8
+                    }
                 }
-            }
         }
     }
 }
+
