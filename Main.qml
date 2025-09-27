@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import ThemeClass 1.0
 
 Window {
     width: 1024
@@ -17,6 +18,11 @@ Window {
 
     property bool isSmallerLayout: width <= 750
     property bool isNormalLayout: !isSmallerLayout
+
+
+    MyThemeClass {
+        id: themeChanger
+    }
 
     //Smaller
     RowLayout {
@@ -70,15 +76,39 @@ Window {
                 //anchors.centerIn: parent
                 icon.name: "homeIcon"
                 icon.source: "qrc:/new/prefix1/home.png"
+                text: "Dark Theme"
+                palette.buttonText: themeChanger.textColor
+                onClicked: themeChanger.setDarkTheme()
+                background: Rectangle {
+                    color: themeChanger.bgTheme
+                }
             }
              Button {
                 width: leftMenu.width
                 height: 50
+
                 //anchors.centerIn: parent
                 icon.name: "homeIcon"
                 icon.source: "qrc:/new/prefix1/home.png"
+                text: "LightTheme"
+                palette.buttonText: themeChanger.textColor
+                onClicked: themeChanger.setLightTheme()
+                background: Rectangle {
+                    color: themeChanger.bgTheme
+                }
             }
 
+            Switch {
+                text: checked ? "Dark Theme" : "Light Theme"
+                checked: false
+
+                onCheckedChanged: {
+                if (checked)
+                    themeChanger.setDarkTheme()
+                else
+                    themeChanger.setLightTheme()
+                }
+            }
         }
     }
 

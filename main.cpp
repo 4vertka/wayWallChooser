@@ -1,11 +1,15 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include "themeclass.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
+
+    qmlRegisterType<ThemeClass>("ThemeClass", 1, 0, "MyThemeClass");
+
     QObject::connect(
         &engine,
         &QQmlApplicationEngine::objectCreationFailed,
