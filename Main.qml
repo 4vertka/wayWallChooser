@@ -65,7 +65,7 @@ Window {
     //left Menu
     Rectangle {
         id: leftMenu
-        color: "#6E8CFB"
+        color: themeChanger.leftPanelTheme
         Column {
             anchors.fill: parent
             spacing: 4
@@ -78,9 +78,11 @@ Window {
                 icon.source: "qrc:/new/prefix1/home.png"
                 text: "Dark Theme"
                 palette.buttonText: themeChanger.textColor
-                onClicked: themeChanger.setDarkTheme()
+                //onClicked: themeChanger.setDarkTheme()
                 background: Rectangle {
-                    color: themeChanger.bgTheme
+                    //color: themeChanger.leftPanelTheme
+                    color: themeChanger.leftPanelTheme
+                    //color: "#eee"
                 }
             }
              Button {
@@ -92,21 +94,46 @@ Window {
                 icon.source: "qrc:/new/prefix1/home.png"
                 text: "LightTheme"
                 palette.buttonText: themeChanger.textColor
-                onClicked: themeChanger.setLightTheme()
+                //onClicked: themeChanger.setLightTheme()
                 background: Rectangle {
-                    color: themeChanger.bgTheme
+                    color: themeChanger.leftPanelTheme
                 }
             }
 
             Switch {
-                text: checked ? "Dark Theme" : "Light Theme"
+                id: themeSwitch
                 checked: false
+                width: leftMenu.width
 
                 onCheckedChanged: {
                 if (checked)
                     themeChanger.setDarkTheme()
                 else
                     themeChanger.setLightTheme()
+                }
+
+                indicator: Rectangle {
+                    implicitWidth: 48
+                    implicitHeight: 26
+                    radius: 13
+                    color: themeSwitch.checked ? "green" : "red"
+                    border.color: "black"
+
+                    Rectangle {
+                        x: themeSwitch.checked ? parent.width - width : 0
+                        width: 26
+                        height: 26
+                        radius: 13
+                        border.color: "black"
+                    }
+                }
+                Text {
+                    id: themeSwitchText
+                    text: themeSwitch.checked ? "DarkTheme" : "Light Theme"
+                    color: themeChanger.textColor
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignRight
+                    verticalAlignment: Text.AlignVCenter
                 }
             }
         }
@@ -115,7 +142,7 @@ Window {
     //mainArea
     Rectangle {
         id: mainArea
-        color: "#636CCB"
+        color: themeChanger.mainPanelTheme
         readonly property real minCellWidth: 240
 
         GridView {

@@ -1,25 +1,28 @@
 #include "themeclass.h"
 
-ThemeClass::ThemeClass(QObject *parent): QObject(parent), m_bgTheme(Qt::white), m_textColor(Qt::black) {}
+ThemeClass::ThemeClass(QObject *parent): QObject(parent),
+    m_leftPanelTheme(QColor(255, 250, 246)),
+    m_mainPanelTheme(QColor(255,250,246)),
+    m_textColor(Qt::black) {}
 
-QColor ThemeClass::getTheme() {return m_bgTheme;}
+QColor ThemeClass::getLeftPanelTheme() {return m_leftPanelTheme;}
 
 void ThemeClass::setLightTheme() {
-    qDebug() << "light theme";
-    setTheme(Qt::white);
+    setLeftPanelTheme(QColor(225, 225, 225));
+    setMainPanelTheme(QColor(246, 246, 246));
     setTextColor(Qt::black);
 }
 
 void ThemeClass::setDarkTheme() {
-    qDebug() << "dark theme";
-    setTheme(Qt::black);
+    setLeftPanelTheme(QColor(27, 26, 85));
+    setMainPanelTheme(QColor(7, 15, 43));
     setTextColor(Qt::white);
 }
 
-void ThemeClass::setTheme(QColor color) {
-    if (m_bgTheme != color) {
-        m_bgTheme = color;
-        emit themeChanged();
+void ThemeClass::setLeftPanelTheme(QColor color) {
+    if (m_leftPanelTheme != color) {
+        m_leftPanelTheme = color;
+        emit leftPanelThemeChanged();
     }
 }
 
@@ -31,4 +34,13 @@ void ThemeClass::setTextColor(QColor color) {
         emit textColorChanged();
     }
 
+}
+
+QColor ThemeClass::getMainPanelTheme() {return m_mainPanelTheme;}
+
+void ThemeClass::setMainPanelTheme(QColor color) {
+    if (m_mainPanelTheme != color) {
+        m_mainPanelTheme = color;
+        emit mainPanelThemeChanged();
+    }
 }

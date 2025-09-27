@@ -8,12 +8,17 @@
 class ThemeClass : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QColor bgTheme READ getTheme WRITE setTheme NOTIFY themeChanged)
+    Q_PROPERTY(QColor leftPanelTheme READ getLeftPanelTheme WRITE setLeftPanelTheme NOTIFY leftPanelThemeChanged)
+    Q_PROPERTY(QColor mainPanelTheme READ getMainPanelTheme WRITE setMainPanelTheme NOTIFY mainPanelThemeChanged)
     Q_PROPERTY(QColor textColor READ getTextColor WRITE setTextColor NOTIFY textColorChanged)
 public:
     explicit ThemeClass(QObject *parent = nullptr);
-    QColor getTheme();
-    void setTheme(QColor color);
+
+    QColor getLeftPanelTheme();
+    void setLeftPanelTheme(QColor color);
+
+    QColor getMainPanelTheme();
+    void setMainPanelTheme(QColor color);
 
     QColor getTextColor();
     void setTextColor(QColor color);
@@ -23,11 +28,13 @@ public slots:
     /*Q_INVOKABLE*/ void setDarkTheme();
 
 signals:
-    void themeChanged();
+    void leftPanelThemeChanged();
+    void mainPanelThemeChanged();
     void textColorChanged();
 
 private:
-    QColor m_bgTheme;
+    QColor m_leftPanelTheme;
+    QColor m_mainPanelTheme;
     QColor m_textColor;
 };
 
