@@ -5,6 +5,7 @@ import QtQuick.Controls
 import ThemeClass 1.0
 import QtQuick.Dialogs
 import Qt.labs.folderlistmodel
+import ImageControl 1.0
 
 Window {
     id: mainWindow
@@ -30,23 +31,13 @@ Window {
         id: themeChanger
     }
 
+    ImageControlClass {
+        id: imageControl
+    }
+
+
     Component.onCompleted: {
         themeChanger.setLightTheme()
-    }
-
-    FolderListModel {
-        id: wallpaperListFolder
-        showDirs: false
-        showFiles: true
-        nameFilters: ["*.png", "*.jpg"]
-    }
-
-    FolderDialog {
-        id: wallpaperFolder
-        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
-        onAccepted: {
-            wallpaperListFolder.folder = wallpaperFolder.selectedFolder
-        }
     }
 
     //Smaller
@@ -152,9 +143,8 @@ Window {
                         onClicked: {
                             selectedMenuIndex=index
                             switch (selectedMenuIndex) {
-                            case 0: wallpaperFolder.open();break;
-                            //case 1: themeChanger.setLightTheme();break;
-                            //case 2: wallpaperFolder.open();break;
+                            case 0: imageControl.loadImages();break;
+                            //case 1: imageControl.loadImages()
                             }
                         }
                     }
@@ -213,7 +203,7 @@ Window {
             cellHeight: cellWidth * 0.6
             anchors.fill: parent
             anchors.margins: 8
-            model: wallpaperListFolder
+            model: imageControl.imagePaths //wallpaperListFolder
             clip: true
 
             ScrollBar.vertical: ScrollBar {
@@ -232,7 +222,7 @@ Window {
                             id: thumbnail
                             anchors.fill: parent
                             fillMode: Image.PreserveAspectFit
-                            source: fileUrl
+                            source: modelData//fileUrl
                             asynchronous: true
                             cache: false
                             smooth: true
