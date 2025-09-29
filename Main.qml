@@ -23,8 +23,14 @@ Window {
     property bool isSmallerLayout: width <= 750
     property bool isNormalLayout: !isSmallerLayout
 
+    property real selectedMenuIndex: 0
+
     MyThemeClass {
         id: themeChanger
+    }
+
+    Component.onCompleted: {
+        themeChanger.setLightTheme()
     }
 
     FolderListModel {
@@ -84,77 +90,74 @@ Window {
     Rectangle {
         id: leftMenu
         color: themeChanger.leftPanelTheme
+        clip: true
         Column {
             anchors.fill: parent
-            spacing: 4
+            //spacing: 4
 
-            Button {
-                width: leftMenu.width
-                height: 50
-                //anchors.centerIn: parent
-                icon.name: "homeIcon"
-                icon.source: "qrc:/new/prefix1/home.png"
-                text: "choose folder"
-                palette.buttonText: themeChanger.textColor
-                onClicked: {
-                    wallpaperFolder.open()
-                }
-                //onClicked: themeChanger.setDarkTheme()
-                background: Rectangle {
-                    //color: themeChanger.leftPanelTheme
-                    color: themeChanger.leftPanelTheme
-                    //color: "#eee"
-                }
-            }
-             Button {
-                width: leftMenu.width
-                height: 50
+            //anchors.fill: parent
+            //spacing: 4
 
-                //anchors.centerIn: parent
-                icon.name: "homeIcon"
-                icon.source: "qrc:/new/prefix1/home.png"
-                text: "LightTheme"
-                palette.buttonText: themeChanger.textColor
-                //onClicked: themeChanger.setLightTheme()
-                background: Rectangle {
-                    color: themeChanger.leftPanelTheme
-                }
+            Item {
+                height: 60
+                width: parent.width
             }
 
-            Switch {
-                id: themeSwitch
-                checked: false
-                width: leftMenu.width
+            Repeater {
+                width: parent.width
+                model: 5
 
-                onCheckedChanged: {
-                if (checked)
-                    themeChanger.setDarkTheme()
-                else
-                    themeChanger.setLightTheme()
-                }
+                delegate: Item {
+                    width: parent.width
+                    height: 50//parent.height
 
-                indicator: Rectangle {
-                    implicitWidth: 48
-                    implicitHeight: 26
-                    radius: 13
-                    color: themeSwitch.checked ? "green" : "red"
-                    border.color: "black"
+                    Row {
+                        id: menurow
+                        spacing: 0
 
-                    Rectangle {
-                        x: themeSwitch.checked ? parent.width - width : 0
-                        width: 26
-                        height: 26
-                        radius: 13
-                        border.color: "black"
+                        Item {
+                            width: 70
+                            height: 50
+
+                            Rectangle {
+                                width: 10
+                                height: 50
+                                radius: width/2
+                                anchors.left: parent.left
+                                anchors.leftMargin: -radius
+                                color: "orange"
+                                visible: selectedMenuIndex==index
+                            }
+
+                            Rectangle {
+                                width: 40
+                                height: 40
+                                radius: 8
+                                anchors.centerIn: parent
+                            }
+                        }
+
+                        Text {
+                            anchors.verticalCenter: parent.verticalCenter
+                            text: qsTr("Menu ") + (index+1).toString()
+                            font.pixelSize: 14
+                            color: "#444"
+                        }
                     }
-                }
-                Text {
-                    id: themeSwitchText
-                    text: themeSwitch.checked ? "DarkTheme" : "Light Theme"
-                    color: themeChanger.textColor
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignRight
-                    verticalAlignment: Text.AlignVCenter
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            selectedMenuIndex=index
+                            if (selectedMenuIndex==0) {
+                                themeChanger.setDarkTheme()
+                            }else if (selectedMenuIndex==1) {
+                                themeChanger.setLightTheme()
+                            }else if (selectedMenuIndex==2) {
+                                wallpaperFolder.open()
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -189,7 +192,8 @@ Window {
                             source: fileUrl
                             asynchronous: true
                             cache: false
-
+                            smooth: true
+                            mipmap: true
                             BusyIndicator {
                                 anchors.centerIn: parent
                                 running: thumbnail.status === Image.Loading
