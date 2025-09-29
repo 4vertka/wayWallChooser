@@ -6,6 +6,7 @@ import ThemeClass 1.0
 import QtQuick.Dialogs
 import Qt.labs.folderlistmodel
 import ImageControl 1.0
+import SettingsTab 1.0
 
 Window {
     id: mainWindow
@@ -26,6 +27,7 @@ Window {
 
     property real selectedMenuIndex: 0
     property bool isDrawOpen: false
+    readonly property real minCellWidth: 240
 
     MyThemeClass {
         id: themeChanger
@@ -35,9 +37,15 @@ Window {
         id: imageControl
     }
 
+    SettingsControlClass {
+        id: settingsControl
+    }
 
     Component.onCompleted: {
         themeChanger.setLightTheme()
+        settingsControl.enableMipMapping()
+        settingsControl.enableSmoothSliding()
+        settingsControl.enableImageCaching()
     }
 
     //Smaller
@@ -98,7 +106,7 @@ Window {
             Repeater {
                 id: leftMenuRepeater
                 width: parent.width
-                model: ["Choose Dir"]
+                model: ["home", "settings", "choose dir"]
 
                 delegate: Item {
                     width: parent.width
@@ -143,48 +151,9 @@ Window {
                         onClicked: {
                             selectedMenuIndex=index
                             switch (selectedMenuIndex) {
-                            case 0: imageControl.loadImages();break;
-                            //case 1: imageControl.loadImages()
+                            case 2: {imageControl.loadImages();break;}
                             }
                         }
-                    }
-                }
-            }
-
-            Switch {
-                id: themeSwitch
-                text: themeSwitch.checked ? qsTr("light Theme") : qsTr("dark Theme")
-
-                contentItem: Text {
-                    text: parent.text
-                    color: themeChanger.textColor
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: parent.indicator.width + parent.spacing
-                }
-
-                indicator: Rectangle {
-                    implicitWidth: 50
-                    implicitHeight: 25
-                    x: themeSwitch.leftPadding
-                    y: parent.height / 2 - height / 2
-                    radius: 15
-                    color: themeSwitch.checked ? "blue" : "grey"
-                    border.color: "black"
-
-                    Rectangle {
-                        x: themeSwitch.checked ? parent.width - width : 0
-                        width: 25
-                        height: 25
-                        radius: 15
-                        color: themeSwitch.checked ? "green" : "red"
-                        border.color: "black"
-                    }
-                }
-                onCheckedChanged: {
-                    if (checked) {
-                        themeChanger.setDarkTheme()
-                    }else {
-                        themeChanger.setLightTheme()
                     }
                 }
             }
@@ -197,44 +166,117 @@ Window {
         color: themeChanger.mainPanelTheme
         readonly property real minCellWidth: 240
 
-        GridView {
-            id: gridImageView
-            cellWidth: width / Math.floor(width / parent.minCellWidth)
-            cellHeight: cellWidth * 0.6
+        Loader {
+            id: mainLoader
             anchors.fill: parent
-            anchors.margins: 8
-            model: imageControl.imagePaths //wallpaperListFolder
-            clip: true
-
-            ScrollBar.vertical: ScrollBar {
-                visible: true
+            sourceComponent:  {
+                if(selectedMenuIndex == 0) {
+                    sourceComponent: wallpaperPage
+                }else if (selectedMenuIndex == 1) {
+                    sourceComponent: settingsPage
+                }else {
+                    sourceComponent: wallpaperPage
+                }
             }
+            //sourceComponent: selectedMenuIndex == 1 ? wallpaperPage : settingsPage
+        }
 
-            delegate: Item {
-                width: gridImageView.cellWidth
-                height: gridImageView.cellHeight
-                    Rectangle {
-                        anchors.fill: parent
-                        anchors.margins: 4
-                        color: themeChanger.mainPanelTheme
-                        radius: 8
-                        Image {
-                            id: thumbnail
+        Component {
+            id: wallpaperPage
+            GridView {
+                id: gridImageView
+                cellWidth: width / Math.floor(width / mainArea.minCellWidth)
+                cellHeight: cellWidth * 0.6
+                anchors.fill: parent
+                anchors.margins: 8
+                model: imageControl.imagePaths //wallpaperListFolder
+                clip: true
+
+                ScrollBar.vertical: ScrollBar {
+                    visible: true
+                }
+
+                delegate: Item {
+                    width: gridImageView.cellWidth
+                    height: gridImageView.cellHeight
+                        Rectangle {
                             anchors.fill: parent
-                            fillMode: Image.PreserveAspectFit
-                            source: modelData//fileUrl
-                            asynchronous: true
-                            cache: false
-                            smooth: true
-                            mipmap: true
-                            BusyIndicator {
-                                anchors.centerIn: parent
-                                running: thumbnail.status === Image.Loading
-                                visible: running
+                            anchors.margins: 4
+                            color: themeChanger.mainPanelTheme
+                            radius: 8
+                            Image {
+                                id: thumbnail
+                                anchors.fill: parent
+                                fillMode: Image.PreserveAspectFit
+                                source: modelData//fileUrl
+                                asynchronous: true
+                                cache: settingsControl.imageCaching
+                                smooth: settingsControl.smoothSliding
+                                mipmap: settingsControl.mipMapping
+                                BusyIndicator {
+                                    anchors.centerIn: parent
+                                    running: thumbnail.status === Image.Loading
+                                    visible: running
+                                }
                             }
                         }
                     }
+            }
+        }
+
+        Component {
+            id: settingsPage
+            Column {
+                anchors.centerIn: parent
+                spacing: 20
+                Text {
+                    text: "Settings"
+                    font.pixelSize: 24
+                    color: themeChanger.textColor
                 }
+                Button {
+                    text: "Example Setting"
+                    onClicked: console.log("Settings clicked")
+                }
+
+                Switch {
+                    id: themeSwitch
+                    text: themeSwitch.checked ? qsTr("dark Theme") : qsTr("light Theme")
+
+                    contentItem: Text {
+                        text: parent.text
+                        color: themeChanger.textColor
+                        verticalAlignment: Text.AlignVCenter
+                        leftPadding: parent.indicator.width + parent.spacing
+                    }
+
+                    indicator: Rectangle {
+                        implicitWidth: 50
+                        implicitHeight: 25
+                        x: themeSwitch.leftPadding
+                        y: parent.height / 2 - height / 2
+                        radius: 15
+                        color: themeSwitch.checked ? "blue" : "grey"
+                        border.color: "black"
+
+                        Rectangle {
+                            x: themeSwitch.checked ? parent.width - width : 0
+                            width: 25
+                            height: 25
+                            radius: 15
+                            color: themeSwitch.checked ? "green" : "red"
+                            border.color: "black"
+                        }
+                    }
+                    onCheckedChanged: {
+                        if (checked) {
+                            themeChanger.setDarkTheme()
+                        }else {
+                            themeChanger.setLightTheme()
+                        }
+                    }
+                }
+            }
         }
     }
 }

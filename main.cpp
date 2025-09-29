@@ -5,6 +5,7 @@
 #include <QFileDevice>
 #include "themeclass.h"
 #include "imagecontrol.h"
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +17,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<ThemeClass>("ThemeClass", 1, 0, "MyThemeClass");
     qmlRegisterType<ImageControl>("ImageControl", 1, 0, "ImageControlClass");
+    qmlRegisterType<Settings>("SettingsTab", 1, 0, "SettingsControlClass");
 
     QObject::connect(
         &engine,
