@@ -1,6 +1,9 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QString>
+#include <QFileDevice>
 #include "themeclass.h"
+
 
 int main(int argc, char *argv[])
 {

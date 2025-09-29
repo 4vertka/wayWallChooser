@@ -1,7 +1,9 @@
 import QtQuick
+import QtCore
 import QtQuick.Layouts
 import QtQuick.Controls
 import ThemeClass 1.0
+import QtQuick.Dialogs
 
 Window {
     width: 1024
@@ -19,9 +21,14 @@ Window {
     property bool isSmallerLayout: width <= 750
     property bool isNormalLayout: !isSmallerLayout
 
-
     MyThemeClass {
         id: themeChanger
+    }
+
+    FolderDialog {
+        id: wallpaperFolder
+        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+        onAccepted: themeChanger.setDarkTheme()
     }
 
     //Smaller
@@ -76,8 +83,11 @@ Window {
                 //anchors.centerIn: parent
                 icon.name: "homeIcon"
                 icon.source: "qrc:/new/prefix1/home.png"
-                text: "Dark Theme"
+                text: "choose folder"
                 palette.buttonText: themeChanger.textColor
+                onClicked: {
+                    wallpaperFolder.open()
+                }
                 //onClicked: themeChanger.setDarkTheme()
                 background: Rectangle {
                     //color: themeChanger.leftPanelTheme

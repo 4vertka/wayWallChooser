@@ -7,6 +7,7 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -20,8 +21,9 @@ qt_add_qml_module(appwallpaper_chooser_pr
     QML_FILES
         Main.qml
         RESOURCES assets.qrc
-        QML_FILES AppTheme.qml
+        QML_FILES
         SOURCES themeclass.h themeclass.cpp
+        SOURCES imagecontrol.h imagecontrol.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -38,6 +40,7 @@ set_target_properties(appwallpaper_chooser_pr PROPERTIES
 target_link_libraries(appwallpaper_chooser_pr
     PRIVATE Qt6::Quick
 )
+target_link_libraries(appwallpaper_chooser_pr PRIVATE Qt6::Core)
 target_link_libraries(appwallpaper_chooser_pr PRIVATE Qt6::Core)
 
 include(GNUInstallDirs)
