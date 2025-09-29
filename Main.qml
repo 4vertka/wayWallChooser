@@ -4,10 +4,10 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import ThemeClass 1.0
 import QtQuick.Dialogs
-//import Qt.labs.folderlistmodel 2.9
 import Qt.labs.folderlistmodel
 
 Window {
+    id: mainWindow
     width: 1024
     height: 720
 
@@ -24,6 +24,7 @@ Window {
     property bool isNormalLayout: !isSmallerLayout
 
     property real selectedMenuIndex: 0
+    property bool isDrawOpen: false
 
     MyThemeClass {
         id: themeChanger
@@ -104,8 +105,9 @@ Window {
             }
 
             Repeater {
+                id: leftMenuRepeater
                 width: parent.width
-                model: 5
+                model: ["Choose Dir"]
 
                 delegate: Item {
                     width: parent.width
@@ -116,16 +118,16 @@ Window {
                         spacing: 0
 
                         Item {
-                            width: 70
+                            width: 50
                             height: 50
 
                             Rectangle {
-                                width: 10
+                                width: 5
                                 height: 50
                                 radius: width/2
                                 anchors.left: parent.left
                                 anchors.leftMargin: -radius
-                                color: "orange"
+                                color: "blue"
                                 visible: selectedMenuIndex==index
                             }
 
@@ -139,9 +141,9 @@ Window {
 
                         Text {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: qsTr("Menu ") + (index+1).toString()
+                            text: modelData
                             font.pixelSize: 14
-                            color: "#444"
+                            color: themeChanger.textColor
                         }
                     }
 
@@ -149,14 +151,50 @@ Window {
                         anchors.fill: parent
                         onClicked: {
                             selectedMenuIndex=index
-                            if (selectedMenuIndex==0) {
-                                themeChanger.setDarkTheme()
-                            }else if (selectedMenuIndex==1) {
-                                themeChanger.setLightTheme()
-                            }else if (selectedMenuIndex==2) {
-                                wallpaperFolder.open()
+                            switch (selectedMenuIndex) {
+                            case 0: wallpaperFolder.open();break;
+                            //case 1: themeChanger.setLightTheme();break;
+                            //case 2: wallpaperFolder.open();break;
                             }
                         }
+                    }
+                }
+            }
+
+            Switch {
+                id: themeSwitch
+                text: themeSwitch.checked ? qsTr("light Theme") : qsTr("dark Theme")
+
+                contentItem: Text {
+                    text: parent.text
+                    color: themeChanger.textColor
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: parent.indicator.width + parent.spacing
+                }
+
+                indicator: Rectangle {
+                    implicitWidth: 50
+                    implicitHeight: 25
+                    x: themeSwitch.leftPadding
+                    y: parent.height / 2 - height / 2
+                    radius: 15
+                    color: themeSwitch.checked ? "blue" : "grey"
+                    border.color: "black"
+
+                    Rectangle {
+                        x: themeSwitch.checked ? parent.width - width : 0
+                        width: 25
+                        height: 25
+                        radius: 15
+                        color: themeSwitch.checked ? "green" : "red"
+                        border.color: "black"
+                    }
+                }
+                onCheckedChanged: {
+                    if (checked) {
+                        themeChanger.setDarkTheme()
+                    }else {
+                        themeChanger.setLightTheme()
                     }
                 }
             }
@@ -172,11 +210,16 @@ Window {
         GridView {
             id: gridImageView
             cellWidth: width / Math.floor(width / parent.minCellWidth)
-            cellHeight: cellWidth * 0.6//1.4
+            cellHeight: cellWidth * 0.6
             anchors.fill: parent
             anchors.margins: 8
             model: wallpaperListFolder
             clip: true
+
+            ScrollBar.vertical: ScrollBar {
+                visible: true
+            }
+
             delegate: Item {
                 width: gridImageView.cellWidth
                 height: gridImageView.cellHeight
