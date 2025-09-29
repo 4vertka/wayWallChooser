@@ -4,6 +4,8 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import ThemeClass 1.0
 import QtQuick.Dialogs
+//import Qt.labs.folderlistmodel 2.9
+import Qt.labs.folderlistmodel
 
 Window {
     width: 1024
@@ -25,10 +27,19 @@ Window {
         id: themeChanger
     }
 
+    FolderListModel {
+        id: wallpaperListFolder
+        showDirs: false
+        showFiles: true
+        nameFilters: ["*.png", "*.jpg"]
+    }
+
     FolderDialog {
         id: wallpaperFolder
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
-        onAccepted: themeChanger.setDarkTheme()
+        onAccepted: {
+            wallpaperListFolder.folder = wallpaperFolder.selectedFolder
+        }
     }
 
     //Smaller
@@ -161,7 +172,7 @@ Window {
             cellHeight: cellWidth * 0.6//1.4
             anchors.fill: parent
             anchors.margins: 8
-            model: 30
+            model: wallpaperListFolder
             clip: true
             delegate: Item {
                 width: gridImageView.cellWidth
@@ -169,8 +180,22 @@ Window {
                     Rectangle {
                         anchors.fill: parent
                         anchors.margins: 4
-                        color: "#eee"
+                        color: themeChanger.mainPanelTheme
                         radius: 8
+                        Image {
+                            id: thumbnail
+                            anchors.fill: parent
+                            fillMode: Image.PreserveAspectFit
+                            source: fileUrl
+                            asynchronous: true
+                            cache: false
+
+                            BusyIndicator {
+                                anchors.centerIn: parent
+                                running: thumbnail.status === Image.Loading
+                                visible: running
+                            }
+                        }
                     }
                 }
         }
