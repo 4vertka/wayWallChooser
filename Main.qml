@@ -105,7 +105,7 @@ Window {
                                     source: {
                                         const iconName = modelData;
                                         const themeSuffix = isDarkTheme ? "_dark.svg" : "_white.svg";
-                                        return "qrc:/" + iconName + themeSuffix;
+                                        return "qrc:/assets/" + iconName + themeSuffix;
                                     }
                                 sourceSize: Qt.size(64, 64)
                                 }
