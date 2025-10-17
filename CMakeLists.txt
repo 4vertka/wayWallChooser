@@ -23,7 +23,7 @@ qt_add_qml_module(appwallpaper_chooser_pr
         Main.qml
         RESOURCES assets.qrc
         QML_FILES
-        SOURCES themeclass.h themeclass.cpp
+        SOURCES
         SOURCES imagecontrol.h imagecontrol.cpp
         QML_FILES
         SOURCES settings.h settings.cpp

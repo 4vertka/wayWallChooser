@@ -53,3 +53,21 @@ void ImageControl::storeImages(QString imagePath) {
 QStringList ImageControl::getImagePath() {
     return m_imagePaths;
 }
+
+void ImageControl::setWallpaper(const QUrl &imageUrl) {
+
+    QString localPath = imageUrl.toLocalFile();
+
+    QProcess *process = new QProcess(this);
+    connect(process, &QProcess::finished, process, &QObject::deleteLater);
+    QString program = "/bin/swww";
+    QStringList arguments;
+    arguments << "img" << localPath;
+    process->start(program, arguments);
+
+    qDebug() << localPath;
+
+
+    emit wallpapersChanged();
+}
+

@@ -2,11 +2,11 @@ import QtQuick
 import QtCore
 import QtQuick.Layouts
 import QtQuick.Controls
-import ThemeClass 1.0
 import QtQuick.Dialogs
 import Qt.labs.folderlistmodel
 import ImageControl 1.0
 import SettingsTab 1.0
+import QtQuick.Controls.Material
 
 Window {
     id: mainWindow
@@ -22,16 +22,11 @@ Window {
     visible: true
     title: qsTr("wall_chooser")
 
-    property bool isSmallerLayout: width <= 750
-    property bool isNormalLayout: !isSmallerLayout
-
     property real selectedMenuIndex: 0
     property bool isDrawOpen: false
     readonly property real minCellWidth: 240
 
-    MyThemeClass {
-        id: themeChanger
-    }
+    property bool isDarkTheme: true
 
     ImageControlClass {
         id: imageControl
@@ -42,17 +37,19 @@ Window {
     }
 
     Component.onCompleted: {
-        themeChanger.setLightTheme()
         settingsControl.enableMipMapping()
         settingsControl.enableSmoothSliding()
         settingsControl.enableImageCaching()
     }
 
+    Material.theme: isDarkTheme ? Material.Dark : Material.Light
+    Material.accent: Material.Blue
+
     //Smaller
     RowLayout {
         anchors.fill: parent
         spacing: 0
-        visible: isSmallerLayout
+        visible: true
 
         LayoutItemProxy  {
             target: leftMenu
@@ -67,29 +64,10 @@ Window {
         }
     }
 
-    //Normal
-    RowLayout {
-        anchors.fill: parent
-        spacing: 0
-        visible: isNormalLayout
-
-        LayoutItemProxy  {
-            target: leftMenu
-            width: 150
-            Layout.fillHeight: true
-        }
-
-        LayoutItemProxy  {
-            target: mainArea
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
-    }
-
     //left Menu
     Rectangle {
         id: leftMenu
-        color: themeChanger.leftPanelTheme
+        color: Material.background
         clip: true
         Column {
             anchors.fill: parent
@@ -110,7 +88,7 @@ Window {
 
                 delegate: Item {
                     width: parent.width
-                    height: 50//parent.height
+                    height: 50
 
                     Row {
                         id: menurow
@@ -135,6 +113,12 @@ Window {
                                 height: 40
                                 radius: 8
                                 anchors.centerIn: parent
+
+                                Image {
+                                    source: "qrc:/new/prefix1/home.png"
+                                    anchors.fill: parent
+                                    fillMode: Image.PreserveAspectFit
+                                }
                             }
                         }
 
@@ -142,7 +126,7 @@ Window {
                             anchors.verticalCenter: parent.verticalCenter
                             text: modelData
                             font.pixelSize: 14
-                            color: themeChanger.textColor
+                            color: Material.foreground
                         }
                     }
 
@@ -151,7 +135,7 @@ Window {
                         onClicked: {
                             selectedMenuIndex=index
                             switch (selectedMenuIndex) {
-                            case 2: {imageControl.loadImages();break;}
+                            case 2: {imageControl.loadImages();selectedMenuIndex=0;break;}
                             }
                         }
                     }
@@ -163,7 +147,7 @@ Window {
     //mainArea
     Rectangle {
         id: mainArea
-        color: themeChanger.mainPanelTheme
+        color: Material.background
         readonly property real minCellWidth: 240
 
         Loader {
@@ -192,6 +176,22 @@ Window {
                 model: imageControl.imagePaths //wallpaperListFolder
                 clip: true
 
+                property bool hasElements: model && model.length > 0
+
+                Text {
+                      //anchors.centerIn: parent
+                      text: "No image loaded.\nPlesase choose directory to load images from"
+                      visible: gridImageView.count === 0
+                      font.pixelSize: 18
+                      color: Material.foreground
+                }
+                Button {
+                    anchors.centerIn: parent
+                    text: "open"
+                    visible: gridImageView.count === 0
+                    onClicked: {imageControl.loadImages()}
+                }
+
                 ScrollBar.vertical: ScrollBar {
                     visible: true
                 }
@@ -202,7 +202,7 @@ Window {
                         Rectangle {
                             anchors.fill: parent
                             anchors.margins: 4
-                            color: themeChanger.mainPanelTheme
+                            color: Material.background
                             radius: 8
                             Image {
                                 id: thumbnail
@@ -218,6 +218,12 @@ Window {
                                     running: thumbnail.status === Image.Loading
                                     visible: running
                                 }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        imageControl.setWallpaper(modelData);
+                                    }
+                                }
                             }
                         }
                     }
@@ -232,48 +238,23 @@ Window {
                 Text {
                     text: "Settings"
                     font.pixelSize: 24
-                    color: themeChanger.textColor
+                    color: Material.foreground
                 }
                 Button {
-                    text: "Example Setting"
-                    onClicked: console.log("Settings clicked")
+                    text: "choose folder to load images"
+                    onClicked: {
+                        imageControl.loadImages();
+                        selectedMenuIndex = 0;
+                    }
                 }
 
                 Switch {
                     id: themeSwitch
-                    text: themeSwitch.checked ? qsTr("dark Theme") : qsTr("light Theme")
+                    text: checked ? qsTr("Dark Theme") : qsTr("Light Theme")
+                    checked: mainWindow.isDarkTheme
 
-                    contentItem: Text {
-                        text: parent.text
-                        color: themeChanger.textColor
-                        verticalAlignment: Text.AlignVCenter
-                        leftPadding: parent.indicator.width + parent.spacing
-                    }
-
-                    indicator: Rectangle {
-                        implicitWidth: 50
-                        implicitHeight: 25
-                        x: themeSwitch.leftPadding
-                        y: parent.height / 2 - height / 2
-                        radius: 15
-                        color: themeSwitch.checked ? "blue" : "grey"
-                        border.color: "black"
-
-                        Rectangle {
-                            x: themeSwitch.checked ? parent.width - width : 0
-                            width: 25
-                            height: 25
-                            radius: 15
-                            color: themeSwitch.checked ? "green" : "red"
-                            border.color: "black"
-                        }
-                    }
                     onCheckedChanged: {
-                        if (checked) {
-                            themeChanger.setDarkTheme()
-                        }else {
-                            themeChanger.setLightTheme()
-                        }
+                        mainWindow.isDarkTheme = checked
                     }
                 }
             }
