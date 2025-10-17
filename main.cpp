@@ -9,9 +9,9 @@
 
 int main(int argc, char *argv[])
 {
-    //QGuiApplication app(argc, argv);
-
     QApplication app(argc, argv);
+
+    QString platform = app.platformName();
 
     QQmlApplicationEngine engine;
 

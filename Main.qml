@@ -36,12 +36,6 @@ Window {
         id: settingsControl
     }
 
-    Component.onCompleted: {
-        settingsControl.enableMipMapping()
-        settingsControl.enableSmoothSliding()
-        settingsControl.enableImageCaching()
-    }
-
     Material.theme: isDarkTheme ? Material.Dark : Material.Light
     Material.accent: Material.Blue
 
@@ -71,20 +65,10 @@ Window {
         clip: true
         Column {
             anchors.fill: parent
-            //spacing: 4
-
-            //anchors.fill: parent
-            //spacing: 4
-
-            Item {
-                height: 60
-                width: parent.width
-            }
-
             Repeater {
                 id: leftMenuRepeater
                 width: parent.width
-                model: ["home", "settings", "choose dir"]
+                model: ["home", "settings"]
 
                 delegate: Item {
                     width: parent.width
@@ -99,12 +83,12 @@ Window {
                             height: 50
 
                             Rectangle {
-                                width: 5
+                                width: 8
                                 height: 50
                                 radius: width/2
                                 anchors.left: parent.left
                                 anchors.leftMargin: -radius
-                                color: "blue"
+                                color: Material.foreground
                                 visible: selectedMenuIndex==index
                             }
 
@@ -113,20 +97,19 @@ Window {
                                 height: 40
                                 radius: 8
                                 anchors.centerIn: parent
-
+                                color: Material.background
                                 Image {
-                                    source: "qrc:/new/prefix1/home.png"
                                     anchors.fill: parent
                                     fillMode: Image.PreserveAspectFit
+                                    antialiasing: true
+                                    source: {
+                                        const iconName = modelData;
+                                        const themeSuffix = isDarkTheme ? "_dark.svg" : "_white.svg";
+                                        return "qrc:/" + iconName + themeSuffix;
+                                    }
+                                sourceSize: Qt.size(64, 64)
                                 }
                             }
-                        }
-
-                        Text {
-                            anchors.verticalCenter: parent.verticalCenter
-                            text: modelData
-                            font.pixelSize: 14
-                            color: Material.foreground
                         }
                     }
 
@@ -179,7 +162,6 @@ Window {
                 property bool hasElements: model && model.length > 0
 
                 Text {
-                      //anchors.centerIn: parent
                       text: "No image loaded.\nPlesase choose directory to load images from"
                       visible: gridImageView.count === 0
                       font.pixelSize: 18
@@ -208,11 +190,11 @@ Window {
                                 id: thumbnail
                                 anchors.fill: parent
                                 fillMode: Image.PreserveAspectFit
-                                source: modelData//fileUrl
+                                source: modelData
                                 asynchronous: true
-                                cache: settingsControl.imageCaching
-                                smooth: settingsControl.smoothSliding
-                                mipmap: settingsControl.mipMapping
+                                cache: true
+                                smooth: true
+                                mipmap: true
                                 BusyIndicator {
                                     anchors.centerIn: parent
                                     running: thumbnail.status === Image.Loading
@@ -232,7 +214,7 @@ Window {
 
         Component {
             id: settingsPage
-            Column {
+            /*Column {
                 anchors.centerIn: parent
                 spacing: 20
                 Text {
@@ -255,6 +237,84 @@ Window {
 
                     onCheckedChanged: {
                         mainWindow.isDarkTheme = checked
+                    }
+                }
+            }*/
+            GridLayout {
+                id: settingsGridLayout
+                columns: 3
+                rows: 3
+                Column {
+                    RadioButton {
+                        text: qsTr("Simple")
+                        checked: imageControl.transitionType === "simple"
+                        onClicked: {
+                            imageControl.transitionType = "simple"
+                        }
+                    }
+                    RadioButton {
+                        text: qsTr("Center")
+                        checked: imageControl.transitionType === "center"
+                        onClicked: {
+                            imageControl.transitionType = "center"
+                        }
+                    }
+                    RadioButton {
+                        text: qsTr("Outer")
+                        checked: imageControl.transitionType === "outer"
+                        onClicked: {
+                            imageControl.transitionType = "outer"
+                        }
+                    }
+                    RadioButton {
+                        text: qsTr("Fade")
+                        checked: imageControl.transitionType === "fade"
+                        onClicked: {
+                            imageControl.transitionType = "fade"
+                        }
+                    }
+                }
+
+                Column {
+                    RadioButton {
+                        text: qsTr("Wipe")
+                        checked: imageControl.transitionType === "wipe"
+                        onClicked: {
+                            imageControl.transitionType = "wipe"
+                        }
+                    }
+                    RadioButton {
+                        text: qsTr("Grow")
+                        checked: imageControl.transitionType === "grow"
+                        onClicked: {
+                            imageControl.transitionType = "grow"
+                        }
+                    }
+                    RadioButton {
+                        text: qsTr("Wave")
+                        checked: imageControl.transitionType === "wave"
+                        onClicked: {
+                            imageControl.transitionType = "wave"
+                        }
+                    }
+                    RadioButton {
+                        text: qsTr("Random")
+                        checked: imageControl.transitionType === "random"
+                        onClicked: {
+                            imageControl.transitionType = "random"
+                        }
+                    }
+                }
+
+                Column {
+                    Switch {
+                        id: themeSwitch
+                        text: checked ? qsTr("Dark Theme") : qsTr("Light Theme")
+                        checked: mainWindow.isDarkTheme
+
+                        onCheckedChanged: {
+                            mainWindow.isDarkTheme = checked
+                        }
                     }
                 }
             }

@@ -1,5 +1,6 @@
 #include "imagecontrol.h"
 #include <QLabel>
+#include <QGuiApplication>
 
 ImageControl::ImageControl(QObject *parent)
     : QObject{parent}
@@ -24,8 +25,6 @@ void ImageControl::loadImages() {
         qDebug() << "no dir selected";
         return;
     }
-
-    //QDir dir(dialog.directory());
 
     QDir dir(selectedDir);
     QStringList filter;
@@ -57,17 +56,29 @@ QStringList ImageControl::getImagePath() {
 void ImageControl::setWallpaper(const QUrl &imageUrl) {
 
     QString localPath = imageUrl.toLocalFile();
+    QString platform = QGuiApplication::platformName();
 
     QProcess *process = new QProcess(this);
     connect(process, &QProcess::finished, process, &QObject::deleteLater);
-    QString program = "/bin/swww";
-    QStringList arguments;
-    arguments << "img" << localPath;
-    process->start(program, arguments);
+
+    if (platform == "wayland") {
+        QString program = "/bin/swww";
+        QStringList arguments;
+        arguments << "img" << localPath << "--transition-type" << m_transitionType;
+        process->start(program, arguments);
+    }
 
     qDebug() << localPath;
-
 
     emit wallpapersChanged();
 }
 
+QString ImageControl::transitionType() const {return m_transitionType;}
+
+void ImageControl::setTransitionType(const QString &type) {
+    if (type == m_transitionType) return;
+
+    m_transitionType = type;
+
+    emit transitionTypeChanged();
+}
