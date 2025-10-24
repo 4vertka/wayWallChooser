@@ -9,9 +9,9 @@ Currently only supports wayland
 - [x] Basic image loading in QML
 - [x] swww usage for image changing
 - [ ] X11 support
-- []
 
 <img src="./program_show.png" />
+<img src="./settings_tab.png" />
 
 ## How to run
 
